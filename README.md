@@ -44,7 +44,7 @@ A Flask-based web application for managing student registrations with an admin d
 
 ## Technology Stack
 - **Backend**: Flask 3.1.2
-- **Database**: SQLite with SQLAlchemy ORM
+- **Database**: SQLite for Local and Postgres for production
 - **Authentication**: Flask-Login
 - **Forms**: Flask-WTF with WTForms
 - **Server**: Gunicorn (production)
