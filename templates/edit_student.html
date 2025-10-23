@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Student - Admin</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 20px;
+        }
+        .header {
+            background-color: #343a40;
+            color: white;
+            padding: 15px 20px;
+            margin: -20px -20px 30px -20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .header h1 {
+            margin: 0;
+        }
+        .back-link {
+            background-color: #6c757d;
+            color: white;
+            padding: 8px 16px;
+            text-decoration: none;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        .back-link:hover {
+            background-color: #545b62;
+            color: white;
+        }
+        .form-container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            max-width: 1000px;
+            margin: 0 auto;
+            padding-right: 6%;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #333;
+        }
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        .form-control:focus {
+            outline: none;
+            border-color: #007bff;
+        }
+        .required {
+            color: red;
+            margin-left: 3px;
+        }
+        .btn-primary {
+            background-color: #007bff;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn-secondary:hover {
+            background-color: #545b62;
+        }
+        .alert {
+            padding: 12px 20px;
+            margin-bottom: 20px;
+            border-radius: 6px;
+            font-weight: bold;
+        }
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .alert-error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .form-row {
+            display: flex;
+            gap: 20px;
+        }
+        .form-row .form-group {
+            flex: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="signup-container">
+    <div class="header">
+        <h1>Edit Student: {{ student.first_name }} {{ student.last_name }}</h1>
+        <a href="{{ url_for('admin.dashboard') }}" class="back-link">← Back to Dashboard</a>
+    </div>
+
+    <div class="form-container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                <div class="alert alert-{{ 'success' if category == 'success' else 'error' }}" role="alert">{{ message }}</div> 
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <form method="POST" enctype="multipart/form-data">
+            {{ form.hidden_tag() }}
+            <div class="form-row">
+                <div class="form-group">
+                    {{ form.first_name.label(class="form-label") }}
+                    <span class="required">*</span>
+                    {{ form.first_name(class="form-control", placeholder="First name") }}
+                </div>
+                <div class="form-group">
+                    {{ form.middle_name.label(class="form-label") }}
+                    {{ form.middle_name(class="form-control", placeholder="Other name") }}
+                </div>
+                <div class="form-group">
+                    {{ form.last_name.label(class="form-label") }}
+                    <span class="required">*</span>
+                    {{ form.last_name(class="form-control", placeholder="Surname") }}
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    {{ form.sex.label(class="form-label") }}
+                    <span class="required">*</span>
+                    {{ form.sex(class="form-control") }}
+                </div>
+                <div class="form-group">
+                    {{ form.dob.label(class="form-label") }}
+                    <span class="required">*</span>
+                    {{ form.dob(class="form-control") }}
+                </div>
+            </div>
+
+            <div class="form-group">
+                {{ form.email.label(class="form-label") }}
+                <span class="required">*</span>
+                {{ form.email(class="form-control", placeholder="Enter your email address") }}
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    {{ form.country_code.label(class="form-label") }}
+                    <span class="required">*</span>
+                    {{ form.country_code(class="form-control") }}
+                </div>
+                <div class="form-group">
+                    {{ form.phone.label(class="form-label") }}
+                    <span class="required">*</span>
+                    {{ form.phone(class="form-control", placeholder="Enter phone number without country code") }}
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    {{ form.state.label(class="form-label") }}
+                    <span class="required">*</span>
+                    {{ form.state(class="form-control", id="state-select") }}
+                </div>
+                <div class="form-group">
+                    {{ form.lga.label(class="form-label") }}
+                    <span class="required">*</span>
+                    {{ form.lga(class="form-control", id="lga-select") }}
+                </div>
+            </div>
+
+            <div class="form-group">
+                {{ form.ppa.label(class="form-label") }}
+                <span class="required">*</span>
+                {{ form.ppa(class="form-control", placeholder="Place of Primary Assignment") }}
+            </div>
+
+            <div class="form-group">
+                {{ form.school.label(class="form-label") }}
+                <span class="required">*</span>
+                {{ form.school(class="form-control", id="school-select") }}
+            </div>
+            
+            <div class="form-group" id="other-school-group" style="display: none;">
+                <label class="form-label">Specify School Name</label>
+                <input type="text" class="form-control" id="other-school" placeholder="Enter your school name">
+            </div>
+
+            <div class="form-group">
+                {{ form.unit.label(class="form-label") }}
+                <span class="required">*</span>
+                {{ form.unit(class="form-control", id="unit-select", multiple=True, style="height: 100px;") }}
+                <small style="display: block; margin-top: 5px; color: #666;">Select up to 3 units (Hold Ctrl/Cmd to select multiple)</small>
+            </div>
+
+            <div class="form-group">
+                {{ form.room_allocated.label(class="form-label") }}
+                <span class="required">*</span>
+                {{ form.room_allocated(class="form-control") }}
+            </div>
+
+            <div class="form-group">
+                {{ form.photo.label(class="form-label") }}
+                {{ form.photo(class="form-control") }}
+                {% if student.photo_filename %}
+                    <small style="color: #666; margin-top: 5px; display: block;">
+                        Current photo: <a href="{{ url_for('public.uploaded_file', filename=student.photo_filename) }}" target="_blank">View Current Photo</a>
+                    </small>
+                {% endif %}
+            </div>
+
+            <div style="margin-top: 30px;">
+                {{ form.submit(class="btn-primary", value="Update Student") }}
+                <a href="{{ url_for('admin.dashboard') }}" class="btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        // Dynamic LGA population
+        const statesLgas = {{ states_lgas|tojson }};
+        const stateSelect = document.getElementById('state-select');
+        const lgaSelect = document.getElementById('lga-select');
+        
+        stateSelect.addEventListener('change', function() {
+            const selectedState = this.value;
+            lgaSelect.innerHTML = '<option value="">Select LGA</option>';
+            
+            if (selectedState && statesLgas[selectedState]) {
+                statesLgas[selectedState].forEach(function(lga) {
+                    const option = document.createElement('option');
+                    option.value = lga;
+                    option.textContent = lga;
+                    lgaSelect.appendChild(option);
+                });
+            }
+        });
+        
+        // Handle school "Other" option
+        const schoolSelect = document.getElementById('school-select');
+        const otherSchoolGroup = document.getElementById('other-school-group');
+        const otherSchoolInput = document.getElementById('other-school');
+        
+        // Check on page load if "Other" is selected
+        if (schoolSelect.value === 'Other') {
+            otherSchoolGroup.style.display = 'block';
+            otherSchoolInput.required = true;
+        }
+        
+        schoolSelect.addEventListener('change', function() {
+            if (this.value === 'Other') {
+                otherSchoolGroup.style.display = 'block';
+                otherSchoolInput.required = true;
+            } else {
+                otherSchoolGroup.style.display = 'none';
+                otherSchoolInput.required = false;
+                otherSchoolInput.value = '';
+            }
+        });
+        
+        // Validate unit selection (max 3)
+        const unitSelect = document.getElementById('unit-select');
+        unitSelect.addEventListener('change', function() {
+            const selectedOptions = Array.from(this.selectedOptions);
+            if (selectedOptions.length > 3) {
+                alert('You can select a maximum of 3 units');
+                selectedOptions[selectedOptions.length - 1].selected = false;
+            }
+        });
+        
+        // Before form submit, if "Other" school is selected, update the school value
+        document.querySelector('form').addEventListener('submit', function(e) {
+            if (schoolSelect.value === 'Other' && otherSchoolInput.value) {
+                schoolSelect.querySelector('option[value="Other"]').value = otherSchoolInput.value;
+                schoolSelect.value = otherSchoolInput.value;
+            }
+        });
+    </script>
+</body>
+</html>

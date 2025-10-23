@@ -1,0 +1,179 @@
+{% extends 'base.html' %}
+
+<h1 class="logo"><a href="/">{% block logo %} Registration {% endblock %}</a></h1>
+{% block nav_url %}/admin/login{% endblock %} {% block nav_text %}Admin Login{% endblock %}
+
+{% block body %}
+<div class="signup-container">
+    <div class="signup-box">
+        <div class="signup-left">
+            <h1 class="signup-title">Sign up</h1>
+            
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}{% for category, message in messages %}
+            <div class="alert alert-{{ 'success' if category == 'success' else 'error' }}">{{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            {% endfor %}
+            {% endif %}
+            {% endwith %}
+            
+            <form method="POST" action="{{ url_for('public.register') }}" enctype="multipart/form-data">
+                {{ form.hidden_tag() }}
+                
+                <div class="form-group">
+                    <div class="input-icon">👤</div>
+                    {{ form.first_name(class="form-input", placeholder="First Name", required=True) }}
+                </div>
+                
+                <div class="form-group">
+                    <div class="input-icon">👤</div>
+                    {{ form.middle_name(class="form-input", placeholder="Middle Name (Optional)") }}
+                </div>
+                
+                <div class="form-group">
+                    <div class="input-icon">👤</div>
+                    {{ form.last_name(class="form-input", placeholder="Last Name", required=True) }}
+                </div>
+                
+                <div class="form-group">
+                    <div class="input-icon">✉️</div>
+                    {{ form.email(class="form-input", placeholder="Your Email", required=True) }}
+                </div>
+                
+                <div class="form-group">
+                    <div class="input-icon">⚧</div>
+                    {{ form.sex(class="select-input", required=True) }}
+                </div>
+                
+                <div class="form-group">
+                    <div class="input-icon">🏢</div>
+                    {{ form.state(class="select-input", id="state", required=True) }}
+                </div>
+                
+                <div class="form-group">
+                    <div class="input-icon">🏛️</div>
+                    {{ form.lga(class="select-input", id="lga", required=True) }}
+                </div>
+                
+                <div class="form-group">
+                    <div class="input-icon">📅</div>
+                    {{ form.dob(class="form-input", required=True) }}
+                </div>
+
+                <div class="form-group">
+                    <div class="input-icon">📱</div>
+                    <div style="display: flex; gap: 8px; align-items: center;">
+                        <div style="flex: 0 0 30%;">
+                            {{ form.country_code(class="select-input", required=True, style="width: 100%;") }}
+                        </div>
+                        <div style="flex: 1;">
+                            {{ form.phone(class="form-input", placeholder="Phone Number", required=True, style="width: 100%;") }}
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <div class="input-icon">🏢</div>
+                    {{ form.ppa(class="form-input", placeholder="Place of Primary Assignment", required=True) }}
+                </div>
+                
+                <div class="form-group">
+                    <div class="input-icon">🎓</div>
+                    {{ form.school(class="select-input", id="school", required=True) }}
+                </div>
+                
+                <div class="form-group" id="other-school-group" style="display: none;">
+                    <div class="input-icon">🎓</div>
+                    <input type="text" class="form-input" id="other-school" placeholder="Enter your school name">
+                </div>
+                
+                <div class="form-group">
+                    <div class="input-icon">⛪</div>
+                    {{ form.unit(class="select-input", id="unit", multiple=True, required=True, style="height: auto;") }}
+                    <small style="display: block; margin-top: 5px; color: #666;">Select up to 3 units (Hold Ctrl/Cmd to select multiple)</small>
+                </div>
+                
+                <div class="form-group">
+                    <div class="input-icon">🏠</div>
+                    {{ form.room_allocated(class="form-input", placeholder="Room Allocated", required=True) }}
+                </div>
+                
+                <div class="form-group">
+                    <div class="input-icon">📷</div>
+                    {{ form.photo(class="form-input", style="padding-top: 12px;") }}
+                </div>
+                
+                <div class="checkbox-group">
+                    <input type="checkbox" id="terms" required>
+                    <label for="terms" class="checkbox-label">
+                        I agree all statements in <a href="#" onclick="return false;">Terms of service</a>
+                    </label>
+                </div>
+                
+                {{ form.submit(class="register-btn", value="Register") }}
+            </form>
+        </div>
+        
+        <div class="signup-right">
+                <img src="{{ url_for('static', filename='images/bg/signup.jpg') }}" alt="PU">
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Update LGA options based on selected state
+    const statesLgas = {{ states_lgas|tojson }};
+    const stateSelect = document.getElementById('state');
+    const lgaSelect = document.getElementById('lga');
+
+    stateSelect.addEventListener('change', function() {
+        const selectedState = this.value;
+        lgaSelect.innerHTML = '<option value="">Select LGA</option>';
+        
+        if (selectedState && statesLgas[selectedState]) {
+            statesLgas[selectedState].forEach(function(lga) {
+                const option = document.createElement('option');
+                option.value = lga;
+                option.textContent = lga;
+                lgaSelect.appendChild(option);
+            });
+        }
+    });
+    
+    // Handle school "Other" option
+    const schoolSelect = document.getElementById('school');
+    const otherSchoolGroup = document.getElementById('other-school-group');
+    const otherSchoolInput = document.getElementById('other-school');
+    
+    schoolSelect.addEventListener('change', function() {
+        if (this.value === 'Other') {
+            otherSchoolGroup.style.display = 'block';
+            otherSchoolInput.required = true;
+        } else {
+            otherSchoolGroup.style.display = 'none';
+            otherSchoolInput.required = false;
+            otherSchoolInput.value = '';
+        }
+    });
+    
+    // Validate unit selection (max 3)
+    const unitSelect = document.getElementById('unit');
+    unitSelect.addEventListener('change', function() {
+        const selectedOptions = Array.from(this.selectedOptions);
+        if (selectedOptions.length > 3) {
+            alert('You can select a maximum of 3 units');
+            selectedOptions[selectedOptions.length - 1].selected = false;
+        }
+    });
+    
+    // Before form submit, if "Other" school is selected, update the school value
+    document.querySelector('form').addEventListener('submit', function(e) {
+        if (schoolSelect.value === 'Other' && otherSchoolInput.value) {
+            schoolSelect.querySelector('option[value="Other"]').value = otherSchoolInput.value;
+            schoolSelect.value = otherSchoolInput.value;
+        }
+    });
+</script>
+{% endblock %}

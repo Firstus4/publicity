@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+<h1 class="logo"><a href="/">{% block logo %} ADMIN | LOGIN {% endblock %}</a></h1>
+{% block title %} ADMIN LOGIN | NCCF KEBBI {% endblock %}
+{% block nav_url %}/admin/logout{% endblock %}{% block nav_text %}Log out{% endblock %}
+{% block nav_url_2 %}/admin/add_admin{% endblock %} {% block nav_text_2 %}Add Admin{% endblock %}
+{% block nav_url_1 %}/started{% endblock %} {% block nav_text_1 %}Register{% endblock %}
+
+{% block body %}
+<br>
+<div class="admin-login-container">
+    <div class="admin-login-box">
+        <div class="admin-left">
+            <img src="{{ url_for('static', filename='images/bg/signin.jpg') }}" alt="PU">
+        </div>
+        <div class="admin-right">
+            <h1 class="admin-title">Admin Login</h1>
+            
+           {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}{% for category, message in messages %}
+            <div class="alert alert-{{ 'success' if category == 'success' else 'error' }}">{{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            {% endfor %}
+            {% endif %}
+            {% endwith %}
+            
+            <form method="POST">
+                {{ form.hidden_tag() }}
+                
+                <div class="admin-form-group">
+                    <div class="admin-input-icon">👤</div>
+                    {{ form.email(class="admin-input", placeholder="Your Email", required=True) }}
+                </div>
+                
+                <div class="admin-form-group">
+                    <div class="admin-input-icon">🔒</div>
+                    {{ form.password(class="admin-input", placeholder="Password", type="password", required=True) }}
+                </div>                
+                {{ form.submit(class="admin-login-btn", value="Log in") }}
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

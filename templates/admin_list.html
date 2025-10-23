@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block title %}All Admins | NCCF KEBBI{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+  <h2 class="mb-4">👥 All Admins</h2>
+
+  <a href="{{ url_for('admin.add_admin') }}" class="btn btn-success mb-3">Add New Admin</a>
+  <a href="{{ url_for('admin.dashboard') }}" class="btn btn-secondary mb-3">Back to Dashboard</a>
+
+<div class="stats">
+        <div class="stat-card">
+            <div class="stat-number">{{ admin|length }}</div>
+            <div>Total Admin</div>
+        </div>
+  
+  {% if admins %}
+  <table class="table table-bordered">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Email</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for admin in admins %}
+      <tr>
+        <td>{{ loop.index }}</td>
+        <td>{{ admin.email }}</td>
+        <td>
+          {% if admin.email != current_user.email and admin.email != getenv("ADMIN_EMAIL") %}
+          <form method="POST" action="{{ url_for('admin.delete_admin', admin_id=admin.id) }}" style="display:inline;" onsubmit="return confirm('Are you sure you want to delete {{ admin.email }}?');">
+            <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+          </form>
+          {% else %}
+          <span class="text-muted">Protected</span>
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p>No other admins have been added yet.</p>
+  {% endif %}
+</div>
+{% endblock %}

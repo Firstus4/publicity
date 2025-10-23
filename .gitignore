@@ -1,0 +1,32 @@
+__pycache__/
+*.pyc
+venv/
+instance/
+*.db
+*.sqlite3
+.env
+# Virtual environment
+venv/
+venv_test/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Databases
+app.db
+*.sqlite3
+
+# Data exports
+*.csv
+*.xlsx
+
+# Editor / IDE settings
+.vscode/
+.idea/
+
+# Environment files
+.env
+
+# Other unnecessary system files
+.DS_Store

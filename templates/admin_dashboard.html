@@ -1,0 +1,184 @@
+{% extends 'base.html' %}
+
+<h1 class="logo"><a href="/">{% block logo %} ADMIN | DASHBOARD {% endblock %}</a></h1>
+{% block title %} DASHBOARD | NCCF KEBBI {% endblock %}
+
+{% block nav %}
+{% block nav_url %}/admin/logout{% endblock %}{% block nav_text %}Log out{% endblock %}
+{% block nav_url_2 %}/admin/add_admin{% endblock %} {% block nav_text_2 %}Add Admin{% endblock %}
+{% block nav_url_1 %}/started{% endblock %} {% block nav_text_1 %}Register{% endblock %}
+{% endblock %}
+
+{% block body %} 
+</head>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}{% for category, message in messages %}
+            <div class="alert alert-{{ 'success' if category == 'success' else 'error' }}">{{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            {% endfor %}
+            {% endif %}
+            {% endwith %}
+<div class="body">
+    <div class="stats">
+        <div class="stat-card">
+            <div class="stat-number">{{ students|length }}</div>
+            <div>Total Students</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">{{ students|groupby('state')|list|length }}</div>
+            <div>Different States</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">{{ admins|length }}</div>
+            <div>Total Admin</div>
+        </div>
+    </div>
+
+    <div class="students-table">
+        <div class="table-header">
+            <h2>Registered Students</h2>
+        </div>
+        
+        {% if students %}
+            <input type="text" id="searchInput" class="search-box" placeholder="Search students..." style="margin: 20px;">
+            
+            <table id="studentsTable">
+                <thead>
+                    <tr>
+                        <th>Photo</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>State/LGA</th>
+                        <th>School</th>
+                        <th>Unit</th>
+                        <th>Room</th>
+                        <th>Date Created</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for student in students %}
+                    <tr>
+                        <td class="photo-cell">
+                            {% if student.photo_filename %}
+                                <img src="{{ url_for('public.uploaded_file', filename=student.photo_filename) }}" alt="Student Photo">
+                            {% else %}
+                                <div style="width:50px;height:50px;background:#eee;display:flex;align-items:center;justify-content:center;border-radius:4px;">📷</div>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <strong>{{ student.first_name }} {{ student.middle_name or '' }} {{ student.last_name }}</strong><br>
+                            <small>{{ student.sex }} • {{ student.dob }}</small>
+                        </td>
+                        <td>{{ student.email }}</td>
+                        <td>{{ student.phone }}</td>
+                        <td>{{ student.state }}<br><small>{{ student.lga }}</small></td>
+                        <td>{{ student.school }}</td>
+                        <td>{{ student.unit }}</td>
+                        <td>{{ student.room_allocated }}</td>
+                        <td>{{ student.created_at.strftime('%Y-%m-%d %H:%M') if student.created_at else 'N/A' }}</td>
+                        <td>
+                            <a href="{{ url_for('admin.edit_student', student_id=student.id) }}" class="btn btn-edit">Edit</a>
+                            <form method="POST" 
+                                action="{{ url_for('admin.delete_student', student_id=student.id) }}" 
+                                style="display:inline;" 
+                                onsubmit="return confirm('Are you sure you want to delete {{ student.first_name }} {{ student.last_name }}?');">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                <button type="submit" class="btn btn-delete">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <div class="no-data">
+                <h3>No students registered yet</h3>
+                <p>Students will appear here once they complete the registration form.</p>
+                <p><a href="/started">Go to Registration Form</a></p>
+            </div>
+        {% endif %}
+    </div>
+
+    <script>
+        // Simple search functionality
+        document.getElementById('searchInput').addEventListener('keyup', function() {
+            const searchTerm = this.value.toLowerCase();
+            const tableRows = document.querySelectorAll('#studentsTable tbody tr');
+            
+            tableRows.forEach(function(row) {
+                const text = row.textContent.toLowerCase();
+                if (text.includes(searchTerm)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        });
+    </script>
+
+<hr>
+
+<div class="admins-table">
+    <div class="table-header">
+        <h2>Registered Admins</h2>
+    </div>
+    {% if current_user.role == 'super_admin' %}
+    <a href="{{ url_for('admin.add_admin') }}"></a>
+    {% endif %}
+    
+    <input type="text" id="searchAdmin" class="search-box" placeholder="Search admins..." style="margin: 20px;">
+
+    {% if admins %}
+        <table id="adminsTable">
+            <thead>
+                <tr>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th>Date Created</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for admin_user in admins %}
+                <tr>
+                    <td>{{ admin_user.email }}</td>
+                    <td>{{ admin_user.role or 'Admin' }}</td>
+                    <td>{{ admin_user.created_at.strftime('%Y-%m-%d %H:%M') if admin_user.created_at else 'N/A' }}</td>
+                    <td>
+                        <form method="POST" action="{{ url_for('admin.delete_admin', admin_id=admin_user.id) }}" style="display:inline;" onsubmit="return confirm('Delete admin {{ admin_user.name }}?');">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <button type="submit" class="btn btn-delete">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <div class="no-data">
+            <h3>No admins created yet</h3>
+            <p>You can add new admins using the <a href="/admin/add_admin">Add Admin</a> page.</p>
+        </div>
+    {% endif %}
+</div>
+
+<script>
+document.getElementById('searchAdmin').addEventListener('keyup', function() {
+    const searchTerm = this.value.toLowerCase();
+    const tableRows = document.querySelectorAll('.admins-table tbody tr');
+    
+    tableRows.forEach(function(row) {
+        const text = row.textContent.toLowerCase();
+        row.style.display = text.includes(searchTerm) ? '' : 'none';
+    });
+});
+</script>
+</div>
+
+</html>
+
+
+{% endblock %}

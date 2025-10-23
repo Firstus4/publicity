@@ -1,0 +1,213 @@
+{% extends 'base.html' %}
+
+{% block title %} NCCF Kebbi State | Publicity Unit {% endblock %}
+{% block body %} 
+<style>
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 20px;
+        }
+        .header {
+            background-color: #007bff;
+            color: white;
+            padding: 20px;
+            margin: -20px -20px 30px -20px;
+            text-align: center;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 2em;
+        }
+        .profile-container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .profile-photo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .profile-photo img {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid #007bff;
+        }
+        .profile-photo .no-photo {
+            width: 150px;
+            height: 150px;
+            background: #e9ecef;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            color: #6c757d;
+            margin: 0 auto;
+        }
+        .profile-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        .info-group {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 6px;
+        }
+        .info-group h3 {
+            margin: 0 0 15px 0;
+            color: #007bff;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 5px;
+        }
+        .info-item {
+            margin-bottom: 15px;
+            display: flex;
+            flex-direction: column;
+        }
+        .info-label {
+            font-weight: bold;
+            color: #495057;
+            margin-bottom: 5px;
+        }
+        .info-value {
+            color: #212529;
+            font-size: 16px;
+        }
+        .btn-edit {
+            background-color: #007bff;
+            color: white;
+            padding: 12px 24px;
+            text-decoration: none;
+            border-radius: 6px;
+            font-size: 16px;
+            display: inline-block;
+            margin-top: 20px;
+            text-align: center;
+        }
+        .btn-edit:hover {
+            background-color: #0056b3;
+            color: white;
+        }
+        .actions {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+        }
+        .alert {
+            padding: 12px 20px;
+            margin-bottom: 20px;
+            border-radius: 6px;
+            font-weight: bold;
+        }
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+</style>
+
+<link rel="stylesheet" href="{{ url_for('static', filename='styles/style.css') }}">
+
+<body>
+    <div class="header">
+        <h1>Student Profile</h1>
+        <p>{{ student.first_name }} {{ student.middle_name or '' }} {{ student.last_name }}</p>
+    </div>
+
+    <div class="profile-container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ 'success' if category == 'success' else 'error' }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <div class="profile-photo">
+            {% if student.photo_filename %}
+                <img src="{{ url_for('public.uploaded_file', filename=student.photo_filename) }}" alt="Student Photo">
+            {% else %}
+                <div class="no-photo">📷</div>
+            {% endif %}
+        </div>
+
+        <div class="profile-info">
+            <div class="info-group">
+                <h3>Personal Information</h3>
+                <div class="info-item">
+                    <span class="info-label">Full Name</span>
+                    <span class="info-value">{{ student.first_name }} {{ student.middle_name or '' }} {{ student.last_name }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Gender</span>
+                    <span class="info-value">{{ student.sex }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Date of Birth</span>
+                    <span class="info-value">{{ student.dob }}</span>
+                </div>
+            </div>
+
+            <div class="info-group">
+                <h3>Contact Information</h3>
+                <div class="info-item">
+                    <span class="info-label">Email</span>
+                    <span class="info-value">{{ student.email }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Phone</span>
+                    <span class="info-value">{{ student.phone }}</span>
+                </div>
+            </div>
+
+            <div class="info-group">
+                <h3>Location Details</h3>
+                <div class="info-item">
+                    <span class="info-label">State of Origin</span>
+                    <span class="info-value">{{ student.state }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Local Government Area</span>
+                    <span class="info-value">{{ student.lga }}</span>
+                </div>
+            </div>
+
+            <div class="info-group">
+                <h3>Assignment Details</h3>
+                <div class="info-item">
+                    <span class="info-label">Place of Primary Assignment</span>
+                    <span class="info-value">{{ student.ppa }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">School</span>
+                    <span class="info-value">{{ student.school }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Church Unit</span>
+                    <span class="info-value">{{ student.unit }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Room Allocated</span>
+                    <span class="info-value">{{ student.room_allocated }}</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="actions">
+            <a href="{{ url_for('public.edit_profile', student_id=student.id) }}" class="btn-edit">Edit My Profile</a>
+        </div>
+    </div>
+</body>
+</html>
+
+{% endblock %}

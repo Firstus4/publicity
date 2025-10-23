@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="{{ url_for('static', filename='styles/animate.min.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='styles/animations.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='styles/bootstrap-icons.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='styles/bootstrap.min.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='styles/style.css') }}">
+<link rel="shortcut icon" href="{{ url_for('static', filename='images/bg/Unit.jpg') }}" type="image/x-icon">
+<link rel="icon" href="{{ url_for('static', filename='images/bg/favicon.ico') }}">
+</head>
+
+<title>{% block title %} NCCF KEBBI {% endblock %}</title>
+
+{% block header %} <header id="header" class=" d-flex align-items-center">
+<div class="container d-flex align-items-center justify-content-between">
+    <a href="/">
+        <img class="PU" src="{{ url_for('static', filename='images/bg/Unit.jpg') }}" alt="PU">
+      </a>
+      <h1 class="logo"><a href="/">{% block logo %} Publicity Unit {% endblock %}</a></h1>
+      <nav id="navbar" class="navbar">
+        <ul>
+          <li><a class="nav-link scrollto active" href="/">Home</a></li>
+          <li><a class="nav-link scrollto" href="/#about">About</a></li>
+          <li><a class="nav-link scrollto" href="{% block nav_url_3 %}/#why-us{% endblock %}">{% block nav_text_3 %}Services{% endblock %}</a></li>
+          <li><a class="nav-link scrollto" href="{% block nav_url_2 %}/#portfolio{% endblock %}">{% block nav_text_2 %}Pictorial Excerpts{% endblock %}</a></li>
+          <li><a class="nav-link scrollto" href="{% block nav_url_1 %}/#team{% endblock %}">{% block nav_text_1 %}team{% endblock %}</a></li>
+          <li><a class="getstarted scrollto" href="{% block nav_url %}started{% endblock %}">{% block nav_text %}Get Started{% endblock %}</a></li>
+        </ul>
+        <i class="bi bi-list mobile-nav-toggle"></i>
+
+    </nav>
+</div>
+</header>
+
+{% endblock %}   
+{% block body %} {% endblock %}
+
+<footer id="footer">
+  <div class="footer-top">
+    <div class="container">
+      <div class="row">
+        <div class="content d-flex flex-column justify-content-center">
+          <div class="row">
+          <div class="col-md-4">
+            <h3 id="h2">Address</h3>
+            <h6>Gidan Kofa Behind Old CID, Road, Birnin-Kebbi, Kebbi State, Nigeria.</h6>
+          </div>
+          <div class="col-md-4">
+            <h3 id="h2">Phone</h3>
+            <a href="tel"><h6 style="color: white;">+234 902 296 3079</h6></a>
+          </div>
+          <div class="col-md-4">
+            <h3 id="h2">Email</h3>
+            <a href="mail"><h6 style="color: white;">info@publicityunit.com</h6></a>
+              <div class="social-links mt-1">
+                <a href="https://www.telegram.com/nccfkebbi" class="telegram"><i class="bi bi-telegram"></i></a>
+                <a href="https://www.facebook.com/nccfkebbi" class="facebook"><i class="bi bi-facebook"></i></a>
+                <a href="https://www.instagram.com/nccfkebbi" class="instagram"><i class="bi bi-instagram"></i></a>
+              </div>
+          </div><hr>
+          <div class="copyright">
+           <!--&copy; Copyright <script>document.write(new Date().getUTCFullYear())</script><span><strong> |<a href="/"> Publicity Unit. </a></span></strong> All Rights Reserved--><br>
+          &copy; Copyright <script> const date = new Date(); const options = { month: 'short', year: 'numeric' };  document.write(date.toLocaleDateString('en-US', options));</script><span><strong> |<a href="/"> Publicity Unit. </a></span></strong> All Rights Reserved
+          <div class="credits">
+            <a>Designed by <a href="https://linkedin.com">Olubiyi Festus</a> <span id="clickMe">(Firstus)</span></a>
+            <script>document.getElementById("clickMe").onclick = function() { alert("Span clicked!"); }; </script>
+          </div>
+</footer>
+
+<a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+<script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/glightbox.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/index.js') }}"></script>
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+<script src="{{ url_for('static', filename='js/swiper-bundle.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/index.js') }}"></script>
+<script src="{{ url_for('static', filename='js/index.js') }}"></script>
+
+</html>
