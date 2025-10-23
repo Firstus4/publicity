@@ -9,6 +9,7 @@ from models import db, Admin
 from public import public_bp
 from dotenv import load_dotenv
 from admin import admin_bp
+from sqlalchemy import inspect
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 UPLOAD_FOLDER = os.path.join(BASE_DIR, 'static/uploads')
@@ -37,7 +38,9 @@ def load_user(admin_id):
     return Admin.query.get(int(admin_id))
 
 with app.app_context():
-    db.create_all()
+    inspector = inspect(db.engine)
+    if not inspector.has_table("student"):
+        db.create_all()
     admin_email = os.getenv('ADMIN_EMAIL')
     admin_password = os.getenv('ADMIN_PASSWORD')
 
