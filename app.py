@@ -18,7 +18,7 @@ load_dotenv()
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'fallback_secret') 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(BASE_DIR, 'app.db')
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL').replace("postgres://", "postgresql://", 1)
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['MAX_CONTENT_LENGTH'] = 4 * 1024 * 1024  # 4MB upload limit
@@ -42,16 +42,21 @@ with app.app_context():
     admin_password = os.getenv('ADMIN_PASSWORD')
 
     if admin_email and admin_password:
-        if not Admin.query.filter_by(email=admin_email).first():
+        existing_admin = Admin.query.filter_by(email=admin_email).first()
+        if not existing_admin:
             a = Admin(
-                email=admin_email, # type: ignore
-                password_hash=generate_password_hash(admin_password) # type: ignore
+                email=admin_email,
+                password_hash=generate_password_hash(admin_password),
+                role='super_admin'
             )
             db.session.add(a)
             db.session.commit()
-            print(f"Default admin created: {admin_email}")
+            print(f"✅ Default super admin created: {admin_email}")
+        else:
+            print(f"ℹ️ Super admin already exists: {admin_email}")
     else:
-        print("No default admin created (ADMIN_EMAIL or ADMIN_PASSWORD missing).")
+        print("⚠️ No default admin created (ADMIN_EMAIL or ADMIN_PASSWORD missing).")
+
 
 app.register_blueprint(public_bp)
 app.register_blueprint(admin_bp)
